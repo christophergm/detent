@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestRolloutHistoryReaderPagesCodexEvents(t *testing.T) {
@@ -39,5 +40,18 @@ func TestRolloutHistoryReaderPagesCodexEvents(t *testing.T) {
 	}
 	if len(page.Events) != 1 || page.HasMore || page.Events[0].Content != "ok package" {
 		t.Fatalf("second page = %#v", page)
+	}
+}
+
+func TestHistoryTextEventPreservesContentWhitespace(t *testing.T) {
+	t.Parallel()
+
+	content := "\n  first line\n    second line  \n"
+	events := historyTextEvent(time.Date(2026, 7, 10, 15, 0, 0, 0, time.UTC), "assistant", "Agent", content)
+	if len(events) != 1 {
+		t.Fatalf("historyTextEvent() returned %d events, want 1", len(events))
+	}
+	if events[0].Content != content {
+		t.Fatalf("historyTextEvent() content = %q, want %q", events[0].Content, content)
 	}
 }

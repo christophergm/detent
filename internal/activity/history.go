@@ -241,8 +241,7 @@ func historyContentEvents(at time.Time, role string, raw json.RawMessage) []Even
 }
 
 func historyTextEvent(at time.Time, kind string, title string, content string) []Event {
-	content = strings.TrimSpace(content)
-	if content == "" {
+	if strings.TrimSpace(content) == "" {
 		return nil
 	}
 	return []Event{{At: at, Kind: kind, Title: title, Content: content}}
